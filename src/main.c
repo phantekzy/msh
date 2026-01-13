@@ -1,31 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "../include/msh.h"
 
-int main() {
-  while (1) {
-    // 1. Print prompt
-    printf("msh> ");
-    fflush(stdout);
+void msh_loop(void) {
+  char *line;
+  char **args;
+  int status;
 
-    // 2. Prepare input buffer
-    char *line = NULL;
-    size_t bufsize = 0;
+  do {
+    printf("msh > ");
+    line = msh_read_line();
+    args = msh_split_line(line);
+    status = msh_execute(args);
 
-    // 3. Read input
-    ssize_t characters = getline(&line, &bufsize, stdin);
-
-    // 4. Check for EOF (Ctrl+D)
-    if (characters == -1) {
-      printf("\n");
-      break; // exit the shell
-    }
-
-    // 5. Echo input
-    printf("You typed: %s", line);
-
-    // 6. Free memory
     free(line);
-  }
+    free(args);
+  } while (status);
+}
 
-  return 0;
+int main(int argc, char **argv) {
+  msh_loop();
+  return EXIT_SUCCESS;
 }
