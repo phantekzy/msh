@@ -1,4 +1,6 @@
+#include "../include/executor.h"
 #include "../include/msh.h"
+#include "../include/parser.h"
 
 void msh_loop(void) {
   char *line;
@@ -26,7 +28,6 @@ int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
 
-  // Ignore Ctrl+C and Ctrl+\ in the main shell loop
   signal(SIGINT, SIG_IGN);
   signal(SIGQUIT, SIG_IGN);
 
