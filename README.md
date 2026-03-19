@@ -1,35 +1,47 @@
 # msh: Maini Shell
 
-A functional command-line interpreter developed in C. This project implements the fundamental mechanics of a Unix shell, focusing on process lifecycle management, environment handling, and inter-process communication.
+A modular command-line interpreter developed in C. This project implements the core mechanics of the Unix Sh-family architecture, focusing on robust process lifecycle management, strict memory hygiene, and environment-aware execution.
 
 ---
 
 ## Technical Features
 
-* **Process Management:** Implements command execution using fork(), execve(), and waitpid().
-* **Built-in Commands:** Native implementations for core utilities:
-    * cd: Supports absolute and relative path navigation.
-    * echo: Handles the -n flag.
-    * export / unset: Modifies the environment during runtime.
-    * pwd, env, and exit.
-* **Redirections:** Manages file descriptor manipulation for standard input/output redirection (>, >>, <).
-* **Pipelines:** Facilitates sequential command execution with inter-process communication via pipe().
-* **Signal Handling:** Custom handlers for SIGINT (Ctrl+C) and SIGQUIT (Ctrl+\) to ensure shell stability and standard terminal behavior.
-* **Environment Management:** Dynamic management of environment variables through structured data pointers.
+* **Advanced Process Management:** Orchestrates command execution via fork(), execvp(), and synchronized waitpid() logic with status boundary checks.
+* **Struct-Mapped Builtins:** High-extensibility architecture using a t_builtin dispatch table for efficient command resolution and modularity.
+    * cd: Optimized with $HOME defaults and OLDPWD tracking for 'cd -' support.
+    * help: Dynamic discovery of available shell internal commands.
+    * exit: Clean termination of the REPL session with proper exit status.
+* **Signal Resilience:** Custom signal masking. SIGINT (Ctrl+C) and SIGQUIT (Ctrl+\) are ignored by the parent shell but restored to default behavior in child processes to ensure terminal stability.
+* **Systems Integration:**
+    * Dynamic Prompt: Real-time $PWD resolution with ANSI color-coding for enhanced navigation.
+    * Environment Sync: Automatic updates to PWD and OLDPWD environment variables during directory transitions.
+* **Memory Hygiene:** Engineered for zero-leak sessions using getline for dynamic buffer management and structured free() cycles in the REPL loop.
 
 ---
 
 ## Architecture Overview
 
-The shell follows a standard Read-Eval-Print Loop (REPL) architecture:
+The shell operates on a refined Read-Eval-Print Loop (REPL) with a modular dependency chain:
 
 1. Lexical Analysis: Tokenizes raw input strings into discrete command components and operators.
-2. Parsing: Analyzes tokens to identify command hierarchies, redirections, and pipeline sequences.
-3. Execution:
-    * Identifies if a command is a shell built-in or an external binary.
-    * Manages child process creation and piping.
-    * Resolves binary paths through the PATH environment variable.
-4. Memory Management: Strictly manages heap allocations to ensure a leak-free environment during long sessions.
+2. Dispatch Engine: A centralized msh_execute layer that differentiates between internal built-ins and external binaries located in the system PATH.
+3. Execution Layer:
+    * Manages the fork-join model for external binaries.
+    * Restores signal defaults in the child context to maintain standard terminal interactivity.
+4. Header-Driven Modularity: Strict separation of concerns across parser, executor, and builtins modules.
+
+---
+
+## Project Structure
+
+.
+├── include/           # Modular headers (msh.h, executor.h, builtins.h, parser.h)
+├── src/               # Implementation logic
+│   ├── main.c         # Entry point & REPL loop
+│   ├── executor.c     # Forking & process execution logic
+│   ├── builtins.c     # Internal shell command implementations
+│   └── parser.c       # String tokenization & I/O handling
+└── Makefile           # Automated build system with -Wall -Wextra flags
 
 ---
 
@@ -53,25 +65,12 @@ The shell follows a standard Read-Eval-Print Loop (REPL) architecture:
 
 ---
 
-## Usage Examples
+## Development & Testing
 
-Binary Execution with Arguments:
-msh> ls -la /usr/bin
-
-Piping and Redirection:
-msh> cat file.txt | grep "pattern" > result.txt
-
-Environment Control:
-msh> export SESSION_ID=42
-msh> env | grep SESSION_ID
-
----
-
-## Project Structure
-
-* src/: Core logic including the executor, parser, and signal handlers.
-* include/: Header files defining data structures and function prototypes.
-* libft/: Internal utility library for string manipulation and memory wrappers.
+The project is validated against the following criteria:
+* Valgrind: Comprehensive heap analysis to ensure zero memory leaks.
+* Signal Stressing: Verification of parent/child signal isolation.
+* POSIX Compliance: Adherence to standard Unix process behavior.
 
 ---
 
