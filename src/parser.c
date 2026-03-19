@@ -55,3 +55,34 @@ char **msh_split_line(char *line) {
   tokens[position] = NULL;
   return tokens;
 }
+
+int msh_has_pipe(char *line){
+  return strchr(line,'|')!= NULL;
+}
+
+
+char **msh_split_pipe(char *line) {
+  int bufsize = MSH_TOK_BUFSIZE;
+  int position = 0;
+  char **commands = malloc(bufsize * sizeof(char *));
+  char *token;
+  if (!commands) {
+    fprintf(stderr, "msh: allocation error\n");
+    exit(EXIT_FAILURE);
+  }
+  token = strtok(line, "|");  // split by pipe
+  while (token != NULL) {
+    commands[position++] = token;
+    if (position >= bufsize) {
+      bufsize += MSH_TOK_BUFSIZE;
+      commands = realloc(commands, bufsize * sizeof(char *));
+      if (!commands) {
+        fprintf(stderr, "msh: realloc error\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+    token = strtok(NULL, "|");
+  }
+  commands[position] = NULL;
+  return commands;
+}
