@@ -73,7 +73,8 @@ int msh_execute_pipe(char **commands) {
     }
     i++;
   }
+  if(input_fd != 0)close(input_fd);
   int status;
-  while (wait(&status) > 0);
+  while(wait(&status)>0);
   return 1;
 }
