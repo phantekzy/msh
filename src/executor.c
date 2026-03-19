@@ -1,7 +1,6 @@
+#include "../include/executor.h"
+#include "../include/builtins.h"
 #include "../include/msh.h"
-
-extern t_builtin g_builtins[];
-int msh_num_builtins(void);
 
 int msh_launch(char **args) {
   pid_t pid;
@@ -13,13 +12,12 @@ int msh_launch(char **args) {
     signal(SIGQUIT, SIG_DFL);
 
     if (execvp(args[0], args) == -1) {
-      perror("msh: execvp");
+      perror("msh: execution error");
     }
     exit(EXIT_FAILURE);
   } else if (pid < 0) {
     perror("msh: fork error");
   } else {
-    // Parent process: Wait robustly
     do {
       waitpid(pid, &status, WUNTRACED);
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
@@ -29,7 +27,7 @@ int msh_launch(char **args) {
 
 int msh_execute(char **args) {
   if (args[0] == NULL) {
-    return 1; // Empty command entered
+    return 1; // Return 1 to keep the shell loop running
   }
 
   for (int i = 0; i < msh_num_builtins(); i++) {
