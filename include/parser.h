@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "msh.h"
+
 char *msh_read_line(void);
 char **msh_split_line(char *line);
 
