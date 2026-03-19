@@ -34,6 +34,7 @@ The shell operates on a refined Read-Eval-Print Loop (REPL) with a modular depen
 
 ## Project Structure
 
+```text
 .
 ├── include/           # Modular headers (msh.h, executor.h, builtins.h, parser.h)
 ├── src/               # Implementation logic
@@ -43,6 +44,7 @@ The shell operates on a refined Read-Eval-Print Loop (REPL) with a modular depen
 │   └── parser.c       # String tokenization & I/O handling
 └── Makefile           # Automated build system with -Wall -Wextra flags
 
+```
 ---
 
 ## Getting Started
@@ -75,4 +77,4 @@ The project is validated against the following criteria:
 ---
 
 ## License
-This project is intended for educational purposes within the scope of systems programming and Unix architecture studies.
+The project is intended for educational purposes within the scope of systems programming and Unix architecture studies.
