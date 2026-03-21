@@ -1,6 +1,7 @@
 #ifndef MSH_H
 #define MSH_H
 
+#include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,4 +18,6 @@ typedef struct s_builtin {
   int (*func)(char **);
 } t_builtin;
 
+// Expansion prototype
+char *msh_expand_vars(char *line);
 #endif

@@ -16,6 +16,9 @@ void msh_loop(void) {
     }
 
     line = msh_read_line();
+
+    line = msh_expand_vars(line);
+
     if (msh_has_pipe(line)) {
       char **commands = msh_split_pipe(line);
       status = msh_execute_pipe(commands);
@@ -27,7 +30,7 @@ void msh_loop(void) {
     }
 
     free(line);
-    
+
   } while (status);
 }
 
