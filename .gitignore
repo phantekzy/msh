@@ -1,3 +1,17 @@
+# Binaries
 msh
+
+# Objects and Dependencies
+obj/
 *.o
+*.d
+
+# OS generated files
 .DS_Store
+.directory
+
+# Common Editor files
+.vscode/
+.idea/
+*.swp
+*~
